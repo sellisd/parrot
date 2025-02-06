@@ -4,9 +4,27 @@ A command line tool for HTTP request/response handling. Features an HTTP echo se
 
 ## Installation
 
+This project uses [uv](https://github.com/astral-sh/uv) for fast Python package installation and environment management.
+
 ```bash
-pip install .
+# Install uv if you haven't already
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create and activate virtual environment
+uv venv
+source .venv/bin/activate  # On Unix/macOS
+# or
+.venv\Scripts\activate     # On Windows
+
+# Install dependencies and package
+uv pip install .
 ```
+
+### Benefits of using uv:
+- Significantly faster installation times
+- Built-in virtual environment management
+- Reliable dependency resolution
+- Binary wheels support for improved performance
 
 ## Usage
 
