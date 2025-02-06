@@ -1,18 +1,21 @@
-from http.server import HTTPServer as BaseHTTPServer, BaseHTTPRequestHandler
-from rich.logging import RichHandler
-from rich.console import Console
 import logging
+from http.server import BaseHTTPRequestHandler
+from http.server import HTTPServer as BaseHTTPServer
+
+from rich.console import Console
+from rich.logging import RichHandler
 
 # Configure Rich logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(message)s",
     datefmt="[%X]",
-    handlers=[RichHandler(rich_tracebacks=True)]
+    handlers=[RichHandler(rich_tracebacks=True)],
 )
 
 logger = logging.getLogger("parrot")
 console = Console()
+
 
 class RequestHandler(BaseHTTPRequestHandler):
     def _handle_request(self):
@@ -43,6 +46,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         self._handle_request()
+
 
 # Re-export HTTPServer for use in cli.py
 HTTPServer = BaseHTTPServer

@@ -1,47 +1,53 @@
 import click
-from rich.console import Console
 import requests
+from rich.console import Console
+
 from . import parrot
 
 console = Console()
+
 
 @click.group()
 def cli():
     """Parrot - A tool for HTTP request/response handling."""
     pass
 
+
 @cli.command()
-@click.option('--port', default=8080, help='Port to run the server on')
+@click.option("--port", default=8080, help="Port to run the server on")
 def serve(port):
     """Start the HTTP echo server."""
     server_address = ("", port)
     httpd = parrot.HTTPServer(server_address, parrot.RequestHandler)
-    console.print(f"Server running on [bold blue]http://localhost:{port}[/bold blue] 🦜")
+    console.print(
+        f"Server running on [bold blue]http://localhost:{port}[/bold blue] 🦜"
+    )
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         console.print("\nShutting down server...")
         httpd.server_close()
 
+
 @cli.command()
-@click.argument('method', type=click.Choice(['get', 'post', 'put', 'delete'], case_sensitive=False))
-@click.argument('url')
-@click.option('--data', '-d', help='Data to send with the request')
-@click.option('--headers', '-h', multiple=True, help='Headers in format key:value')
+@click.argument(
+    "method", type=click.Choice(["get", "post", "put", "delete"], case_sensitive=False)
+)
+@click.argument("url")
+@click.option("--data", "-d", help="Data to send with the request")
+@click.option("--headers", "-h", multiple=True, help="Headers in format key:value")
 def request(method, url, data, headers):
     """Make HTTP requests and display responses."""
     headers_dict = {}
     for header in headers or []:
-        key, value = header.split(':', 1)
+        key, value = header.split(":", 1)
         headers_dict[key.strip()] = value.strip()
 
     try:
         response = getattr(requests, method.lower())(
-            url,
-            data=data,
-            headers=headers_dict
+            url, data=data, headers=headers_dict
         )
-        
+
         console.print("\n=== Request Details 🦜===")
         console.print(f"[bold blue]Method:[/bold blue] {method.upper()}")
         console.print(f"[bold blue]URL:[/bold blue] {url}")
@@ -66,12 +72,15 @@ def request(method, url, data, headers):
         console.print(f"[bold red]Error:[/bold red] {str(e)}")
         raise click.Abort()
 
+
 @cli.command()
 def version():
     """Show version information."""
     from importlib.metadata import version
+
     v = version("parrot")
     console.print(f"Parrot version: [bold blue]{v}[/bold blue] 🦜")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     cli()
