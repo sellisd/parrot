@@ -21,18 +21,15 @@ jobs:
           pip install uv
           uv pip install '.[dev]'
       - name: Run tests
-        run: pytest
+        run: |
+          source .venv/bin/activate
+          pytest
 
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: chartboost/ruff-action@v1
+      - uses: astral-sh/ruff-action@v3
         with:
-          version: latest
-          args: check .
-      - name: Run Ruff format
-        uses: chartboost/ruff-action@v1
-        with:
-          version: latest
-          args: format . --check
+          version: "latest"
+          args: check --format .
