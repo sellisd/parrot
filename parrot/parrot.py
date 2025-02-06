@@ -1,4 +1,4 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer as BaseHTTPServer, BaseHTTPRequestHandler
 from rich.logging import RichHandler
 from rich.console import Console
 import logging
@@ -44,13 +44,5 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_DELETE(self):
         self._handle_request()
 
-
-def run_server():
-    server_address = ("", 8080)
-    httpd = HTTPServer(server_address, RequestHandler)
-    print("Server running on http://localhost:8080")
-    httpd.serve_forever()
-
-
-if __name__ == "__main__":
-    run_server()
+# Re-export HTTPServer for use in cli.py
+HTTPServer = BaseHTTPServer

@@ -1,0 +1,18 @@
+[project]
+name = "parrot"
+version = "0.1.0"
+description = "A server to echo back http requets"
+authors = [{name = "Diamantis Sellis", email = "sellisd@gmail.com"}]
+license = { text = "MIT" }
+dependencies = [
+  "rich",
+  "click",
+  "requests"
+]
+
+[project.scripts]
+parrot = "parrot.cli:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
