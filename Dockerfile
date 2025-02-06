@@ -1,32 +1,20 @@
-FROM python:3.11-slim as builder
+FROM python:3.13-slim
 
 WORKDIR /app
 
 # Copy only the files needed for installation
 COPY pyproject.toml ./
 COPY parrot/ ./parrot/
+COPY tests/ ./tests/
 
-# Install build dependencies and build the package
-RUN pip install --no-cache-dir build && \
-    python -m build
-
-# Start fresh with a clean image
-FROM python:3.11-slim
-
-WORKDIR /app
-
-# Copy the built package from the builder stage
-COPY --from=builder /app/dist/*.whl .
-
-# Install the package
-RUN pip install --no-cache-dir *.whl && \
-    rm *.whl
+# Install the package directly
+RUN pip install --no-cache-dir .
 
 # Set environment variables
-ENV HOST=0.0.0.0
-ENV PORT=8080
-ENV LOG_FORMAT=json
-ENV LOG_LEVEL=INFO
+ENV HOST=0.0.0.0 \
+    PORT=8080 \
+    LOG_FORMAT=json \
+    LOG_LEVEL=INFO
 
 # Expose the port
 EXPOSE 8080

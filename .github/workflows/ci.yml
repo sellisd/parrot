@@ -1,13 +1,9 @@
 name: CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
-  test:
+  localtest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,10 +16,10 @@ jobs:
           source .venv/bin/activate
           pip install uv
           uv pip install '.[dev]'
-      - name: Run tests
+      - name: Run tests with debug output
         run: |
           source .venv/bin/activate
-          pytest
+          python -m pytest
 
   lint:
     runs-on: ubuntu-latest

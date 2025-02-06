@@ -34,6 +34,8 @@ logger = logging.getLogger("parrot")
 console = Console()
 
 class RequestHandler(BaseHTTPRequestHandler):
+    protocol_version = 'HTTP/1.1'  # Set HTTP version
+
     def _log_request(self, request_id: str, data: Dict[str, Any]) -> None:
         """Log request details in the configured format."""
         if config.log_format == "json":
@@ -56,32 +58,33 @@ class RequestHandler(BaseHTTPRequestHandler):
                 console.print(data["body"], style="yellow")
 
     def _handle_request(self):
-        """Handle incoming HTTP requests."""
-        global REQUEST_COUNT
-        REQUEST_COUNT += 1
-        
-        request_id = str(uuid4())
-        self.send_header("X-Request-ID", request_id)
-        
-        # Handle health check endpoint
-        if self.path == "/health":
-            self._handle_health_check()
-            return
+        """Generic handler for all HTTP methods"""
+        logger.warning("fava")
 
-        content_length = int(self.headers.get("Content-Length", 0))
-        request_data = {}
-        
+        # Read body if present
+        content_length = int(self.headers.get('Content-Length', 0))
+        body = None
         if content_length > 0:
-            body = self.rfile.read(content_length).decode("utf-8")
-            request_data["body"] = body
-
-        self._log_request(request_id, request_data)
-
+            body = self.rfile.read(content_length).decode('utf-8')
+        
+        # Create response data
+        response = {
+            'method': self.command,
+            'path': self.path,
+            'headers': dict(self.headers),
+        }
+        if body:
+            response['body'] = body
+            
         # Send response
+        response_data = json.dumps(response).encode('utf-8')
         self.send_response(200)
-        self.send_header("Content-type", "text/plain")
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Content-Length', str(len(response_data)))
+        self.send_header('Connection', 'close')
         self.end_headers()
-        self.wfile.write(b"Request received")
+        self.wfile.write(response_data)
+        self.wfile.flush()
 
     def _handle_health_check(self):
         """Handle health check requests."""
@@ -96,17 +99,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(health_data).encode())
 
-    def do_GET(self):
-        self._handle_request()
-
-    def do_POST(self):
-        self._handle_request()
-
-    def do_PUT(self):
-        self._handle_request()
-
-    def do_DELETE(self):
-        self._handle_request()
+    def do_GET(self): self._handle_request()
+    def do_POST(self): self._handle_request()
+    def do_PUT(self): self._handle_request()
+    def do_DELETE(self): self._handle_request()
 
 # Re-export HTTPServer for use in cli.py
 HTTPServer = BaseHTTPServer

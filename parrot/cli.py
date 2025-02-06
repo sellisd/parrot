@@ -1,5 +1,9 @@
 import click
 import requests
+import signal
+import sys
+import time
+from threading import Timer
 from rich.console import Console
 
 from . import parrot
@@ -15,7 +19,7 @@ def cli():
 
 
 @cli.command()
-@click.option("--port", default=None, help="Port to run the server on (overrides PORT env var)")
+@click.option("--port", default=None, type=int, help="Port to run the server on (overrides PORT env var)")
 @click.option("--host", default=None, help="Host to bind to (overrides HOST env var)")
 @click.option("--log-format", type=click.Choice(["pretty", "json"]), default=None, 
               help="Logging format (overrides LOG_FORMAT env var)")
@@ -31,13 +35,16 @@ def serve(port, host, log_format):
     server_address = (config.host, config.port)
     httpd = parrot.HTTPServer(server_address, parrot.RequestHandler)
     console.print(
-        f"Server running on [bold blue]http://localhost:{port}[/bold blue] 🦜"
+        f"Server running on [bold blue]http://localhost:{config.port}[/bold blue] 🦜"
     )
+
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        console.print("\nShutting down server...")
-        httpd.server_close()
+        console.print("Server stopped")
+    except Exception as e:
+        console.print(f"[bold red]Error:[/bold red] {e}", style="red")
+        sys.exit(1)
 
 
 @cli.command()
