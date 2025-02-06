@@ -1,15 +1,8 @@
 # Parrot 🦜
 
-A server to echo back HTTP requests with cloud-ready capabilities.
+A server to echo back HTTP requests.
 
-## Features
-
-- Echo back HTTP request details (method, path, headers, body)
-- Health check endpoint with metrics
-- Configurable JSON or pretty logging
-- Docker container support
-- Kubernetes deployment ready
-- GitHub Actions CI/CD pipeline
+![Demo](assets/demo.gif)
 
 ## Installation
 
