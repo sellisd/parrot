@@ -10,6 +10,14 @@ dependencies = [
   "requests"
 ]
 
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pytest-cov",
+  "pytest-mock",
+  "ruff"
+]
+
 [project.scripts]
 parrot = "parrot.cli:cli"
 
