@@ -19,10 +19,19 @@ def cli():
 
 
 @cli.command()
-@click.option("--port", default=None, type=int, help="Port to run the server on (overrides PORT env var)")
+@click.option(
+    "--port",
+    default=None,
+    type=int,
+    help="Port to run the server on (overrides PORT env var)",
+)
 @click.option("--host", default=None, help="Host to bind to (overrides HOST env var)")
-@click.option("--log-format", type=click.Choice(["pretty", "json"]), default=None, 
-              help="Logging format (overrides LOG_FORMAT env var)")
+@click.option(
+    "--log-format",
+    type=click.Choice(["pretty", "json"]),
+    default=None,
+    help="Logging format (overrides LOG_FORMAT env var)",
+)
 def serve(port, host, log_format):
     """Start the HTTP echo server."""
     if port is not None:

@@ -33,8 +33,9 @@ else:
 logger = logging.getLogger("parrot")
 console = Console()
 
+
 class RequestHandler(BaseHTTPRequestHandler):
-    protocol_version = 'HTTP/1.1'  # Set HTTP version
+    protocol_version = "HTTP/1.1"  # Set HTTP version
 
     def _log_request(self, request_id: str, data: Dict[str, Any]) -> None:
         """Log request details in the configured format."""
@@ -44,7 +45,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 "method": self.command,
                 "path": self.path,
                 "headers": dict(self.headers),
-                **data
+                **data,
             }
             logger.info(json.dumps(log_data))
         else:
@@ -62,26 +63,26 @@ class RequestHandler(BaseHTTPRequestHandler):
         logger.warning("fava")
 
         # Read body if present
-        content_length = int(self.headers.get('Content-Length', 0))
+        content_length = int(self.headers.get("Content-Length", 0))
         body = None
         if content_length > 0:
-            body = self.rfile.read(content_length).decode('utf-8')
-        
+            body = self.rfile.read(content_length).decode("utf-8")
+
         # Create response data
         response = {
-            'method': self.command,
-            'path': self.path,
-            'headers': dict(self.headers),
+            "method": self.command,
+            "path": self.path,
+            "headers": dict(self.headers),
         }
         if body:
-            response['body'] = body
-            
+            response["body"] = body
+
         # Send response
-        response_data = json.dumps(response).encode('utf-8')
+        response_data = json.dumps(response).encode("utf-8")
         self.send_response(200)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Content-Length', str(len(response_data)))
-        self.send_header('Connection', 'close')
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(response_data)))
+        self.send_header("Connection", "close")
         self.end_headers()
         self.wfile.write(response_data)
         self.wfile.flush()
@@ -91,18 +92,26 @@ class RequestHandler(BaseHTTPRequestHandler):
         health_data = {
             "status": "healthy",
             "uptime": int(time.time() - START_TIME),
-            "request_count": REQUEST_COUNT
+            "request_count": REQUEST_COUNT,
         }
-        
+
         self.send_response(200)
         self.send_header("Content-type", "application/json")
         self.end_headers()
         self.wfile.write(json.dumps(health_data).encode())
 
-    def do_GET(self): self._handle_request()
-    def do_POST(self): self._handle_request()
-    def do_PUT(self): self._handle_request()
-    def do_DELETE(self): self._handle_request()
+    def do_GET(self):
+        self._handle_request()
+
+    def do_POST(self):
+        self._handle_request()
+
+    def do_PUT(self):
+        self._handle_request()
+
+    def do_DELETE(self):
+        self._handle_request()
+
 
 # Re-export HTTPServer for use in cli.py
 HTTPServer = BaseHTTPServer

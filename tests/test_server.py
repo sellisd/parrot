@@ -11,6 +11,7 @@ from parrot.parrot import HTTPServer, RequestHandler
 
 logger = logging.getLogger(__name__)
 
+
 @pytest.fixture
 def server():
     """Start a test server in a separate thread."""
@@ -24,11 +25,12 @@ def server():
     server.server_close()
     logger.debug("Server shutdown")
 
+
 class TestHTTPServer:
     @pytest.fixture(autouse=True)
     def setup_server(self):
         """Setup test server before each test method"""
-        self.server = HTTPServer(('0.0.0.0', 0), RequestHandler)
+        self.server = HTTPServer(("0.0.0.0", 0), RequestHandler)
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True
         self.server_thread.start()
@@ -41,12 +43,9 @@ class TestHTTPServer:
 
     def test_get_request(self):
         """Test GET request with complete response validation"""
-        response = requests.get(
-            f'http://localhost:{self.port}/test',
-            timeout=5
-        )
+        response = requests.get(f"http://localhost:{self.port}/test", timeout=5)
         assert response.status_code == 200
-        assert response.headers['Content-Type'] == 'application/json'
+        assert response.headers["Content-Type"] == "application/json"
 
     def test_post_request(self):
         """Test POST request with body."""
