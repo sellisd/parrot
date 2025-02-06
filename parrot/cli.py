@@ -3,6 +3,7 @@ import requests
 from rich.console import Console
 
 from . import parrot
+from .config import config
 
 console = Console()
 
@@ -14,10 +15,20 @@ def cli():
 
 
 @cli.command()
-@click.option("--port", default=8080, help="Port to run the server on")
-def serve(port):
+@click.option("--port", default=None, help="Port to run the server on (overrides PORT env var)")
+@click.option("--host", default=None, help="Host to bind to (overrides HOST env var)")
+@click.option("--log-format", type=click.Choice(["pretty", "json"]), default=None, 
+              help="Logging format (overrides LOG_FORMAT env var)")
+def serve(port, host, log_format):
     """Start the HTTP echo server."""
-    server_address = ("", port)
+    if port is not None:
+        config.port = port
+    if host is not None:
+        config.host = host
+    if log_format is not None:
+        config.log_format = log_format
+
+    server_address = (config.host, config.port)
     httpd = parrot.HTTPServer(server_address, parrot.RequestHandler)
     console.print(
         f"Server running on [bold blue]http://localhost:{port}[/bold blue] 🦜"
