@@ -60,7 +60,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def _handle_request(self):
         """Generic handler for all HTTP methods"""
-        logger.warning("fava")
 
         # Read body if present
         content_length = int(self.headers.get("Content-Length", 0))
